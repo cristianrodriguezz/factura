@@ -122,9 +122,9 @@ form{
 			<label for="pago">Pago:</label>
 			<input type="text" name="pago" id="pago" >
 			<label for="fecha">Fecha:</label>
-			<input type="text" name="fecha" id="fecha" >
+			<input type="text" placeholder="DD/MM/YYYY" name="fecha" id="fecha" >
 			<label for="hora">Hora:</label>
-			<input type="text" name="hora" id="hora" >
+			<input type="text" name="hora" id="hora" placeholder="HH:MM:SS" >
 			<label for="total">Total:</label>
 			<input type="text" name="total" id="total" >
 			<label for="precioXLitro">precioXLitro:</label>
@@ -133,6 +133,8 @@ form{
 			<input type="text" name="itc" id="itc" >
 			<label for="factura">N° de factura:</label>
 			<input type="text" name="factura" id="factura" >
+			<label for="surtidor">N° de surtidor</label>
+			<input type="text" name="surtidor" id="surtidor" >
 
 			<button>enter</button>
 		</form>
@@ -161,7 +163,7 @@ form{
 					<p style="min-width: 185px; font-size: 11.5px"><strong>TIQUE FACTURA "A" (Cód.081)</strong></p>
 
 					<div style="display: flex; flex-direction: column; align-items: end">
-						<p>N° 00022-<span id="numeroFactura">00070232</span></p>
+						<p>N° <span id="numeroFactura">00022-00070232</span></p>
 						<p>Fecha <span class="fecha">11/10/2024</span> </p>
 						<p>Hora <span class="hora">13:31:21</span></p>
 					</div>
@@ -187,51 +189,14 @@ form{
 			<tr>
 				<td class="border-top padding-t-3 padding-b-3">
 					<div class="deduccion">
-					
+						
 					</div>
 				</td>
 			</tr>
 			</tr>
 		</table>
-		<p>Recibí(mos):</p>
-		<div style="display: flex; justify-content: space-between;">
-			<p>
-				<p>Fecha: <span class="fecha">21/11/2023</span> <span class="hora">hora</span></p>
-			</p>
-			<div style="display: flex; gap:40px">
-				<p>
-					SU PA    
-				</p>
-				<p class="supa">
-					$52000
-				</p>
-			</div>
-		</div>
-		<div style="display: flex; justify-content: space-between;" class="font">
-			<p style="font-weight: bold;">
-				CAMBIO
-			</p>
-			<p>$0.00</p>
-		</div>
-		<div style="display: flex; justify-content: space-between; margin-top: 20px;">
-			<p>
-				Cajeros:
-			</p>
-			<p>
-				Turnos: 2
-			</p>
-		</div>
-		<div style="display: flex; justify-content: space-between; margin-top: 10px;">
-			<p>
-				<i>CF</i> HHW4830470
-			</p>
-			<p>
-				V: 02.01
-			</p>
-		</div>
-		<p><i>DF</i></p>
-		</div>
-		<button onclick="printDiv()" style="height: 30px; width: 100%; margin-top: 20px;">imprimir</button>
+
+		<button onclick="printDiv()" style="height: 30px; width: 100%; margin-top: 20px; ">imprimir</button>
 	</div>
 </body>
 <script>
@@ -259,7 +224,8 @@ form{
 	const $pago = document.querySelector('.pago')
 	const $deduccion = document.querySelector('.deduccion')
 	const $numeroFactura = document.querySelector('#numeroFactura')
-	const $supa = document.querySelector('.supa')
+
+
 
 	function formatPesosARS(number) {
 		const formattedNumber = new Intl.NumberFormat('es-AR', {
@@ -276,6 +242,23 @@ form{
 			minimumFractionDigits: 2,
 			maximumFractionDigits: 3
 		})
+	}
+
+	function sumar20Segundos(hora) {
+		const [horas, minutos, segundos] = hora.split(':').map(Number);
+	  
+		let totalSegundos = horas * 3600 + minutos * 60 + segundos + 20;
+	  
+		const nuevasHoras = Math.floor(totalSegundos / 3600) % 24;
+		totalSegundos %= 3600;
+		const nuevosMinutos = Math.floor(totalSegundos / 60);
+		const nuevosSegundos = totalSegundos % 60;
+	  
+		const formatoHora = String(nuevasHoras).padStart(2, '0');
+		const formatoMinutos = String(nuevosMinutos).padStart(2, '0');
+		const formatoSegundos = String(nuevosSegundos).padStart(2, '0');
+	  
+		return `${formatoHora}:${formatoMinutos}:${formatoSegundos}`;
 	}
 
 
@@ -297,23 +280,26 @@ form{
 			precioXLitro: formData.get('precioXLitro'),
 			itc: formData.get('itc'),
 			factura: formData.get('factura'),
+			surtidor: formData.get('surtidor')
 		}
 
 		$fecha.innerHTML = data.fecha
 		$hora.innerHTML = data.hora
 		$numeroFactura.innerText = data.factura
-		$supa.innerText = formatPesosARS(data.total)
+
 
 		let IVA = 21
 		
-		let ITC = data.itc * (data.total / data.precioXLitro)
-		let subtotal = (data.total - ITC) / 1.21
 		let litros = data.total / data.precioXLitro
+		let ITC = data.itc * (data.total / data.precioXLitro)
+		let subtotal = (data.total - (ITC * litros)) / 1.21
 		let IVATotal = subtotal * 0.21
+		let precioLitrosSinImpuesto = subtotal / litros
+		let impuestoInterno = litros * ITC
 
 		$deduccion.innerHTML = `	
 
-						<p>${formatDecimal(litros)} u x TODO</p>
+						<p>${litros.toFixed(4).toString().replace('.', ',')} u x ${precioLitrosSinImpuesto.toFixed(4).toString().replace('.', ',')}</p>
 						<p>(5075)ENERGY DIESEL X10</p>
 						<p>ITC Unit.x Lt: ${ITC.toFixed(4).toString().replace('.', ',')}</p>
 						<div style="display: flex; justify-content: space-between;">
@@ -330,6 +316,42 @@ form{
 						<div  style="display: flex; justify-content: space-between;">
 							<p>ALICUOTA 21,00%</p>
 							<p>${IVATotal.toFixed(2).toString().replace('.', ',')}</p>
+						</div>
+						<br/>
+						<div style="display: flex; justify-content: space-between;">
+							<p>10 - Impuesto interno a nivel item</p>
+							<p>${impuestoInterno.toFixed(2).toString().replace('.', ',')}</p>
+						</div>
+						<div style="display: flex; justify-content: space-between;">
+							<p>IMPORTE TOTAL OTROS TRIBUTOS</p>
+							<p>${impuestoInterno.toFixed(2).toString().replace('.', ',')}</p>
+						</div>
+						<br/>
+						<div style="font-size: 20px; font-weight: bold; display: flex; justify-content: space-between">
+							<p>TOTAL</p>
+							<p>${data.total.toString().replace('.', ',')}</p>
+						</div>
+						<br/>
+						<p>RECIBI/MOS</p>
+						<p>Cant. Cuotas: 1</p>
+						<p>(C029 <span style="margin-left: 5px">)</span> CONTADO</p>
+						<div style="display: flex; justify-content: space-between">
+							<p>Efectivo</p>
+							<p>${data.total.toString().replace('.', ',')}</p>
+						</div>
+						<div style="display: flex; justify-content: space-between">
+							<p>Suma de sus pagos</p>
+							<p>${data.total.toString().replace('.', ',')}</p>
+						</div>
+						<div style="display: flex; justify-content: space-between">
+							<p>Su vuelto</p>
+							<p>0,00</p>
+						</div>
+						<br/>
+						<p>Surt:${data.surtidor}-Mg:12 (CO) [11/10/2021 ${sumar20Segundos(data.hora)}]</p>
+						<div style="max-width: 85%; text-align: center; ">
+							<p><i style="margin-right: 15px">CF</i>REGISTRO: EPEPAA0000048273</p>
+							<p>V: 1.03 Neptuno</p>
 						</div>
 
 				`
