@@ -17,19 +17,19 @@
 	}
 .font{
 	font-family: monospace;
-  font-size: 12px;
+  	font-size: 12px;
 }
 
 
 .bill-container{
-  border-collapse: collapse;
-  max-width: 8cm;
+	border-collapse: collapse;
+	max-width: 8cm;
 	min-width: 8cm;
-  left:0;
-  right: 0;
-  border-collapse: collapse;
-  font-family: monospace;
-  font-size: 10.5px;
+	left:0;
+	right: 0;
+	border-collapse: collapse;
+	font-family: monospace;
+	font-size: 10.5px;
 }
 .title{
 	font-family: monospace;
@@ -41,11 +41,11 @@
 }
 
 .text-lg{
-  font-size: 20px;
+	font-size: 20px;
 }
 
 .text-center{
-  text-align: center;
+	text-align: center;
 }
 
 .title-second{
@@ -60,34 +60,34 @@
 
 
 #qrcode {
-  width: 75%
+	width: 75%
 }
 
 p {
-  margin: 2px 0;
+	margin: 2px 0;
 }
 
 table table {
-  width: 100%;
+	width: 100%;
 }
 table{
 	width: 100%;
 }
 
 table table tr td:last-child{
-  text-align: right;
+	text-align: right;
 }
 
 .border-top {
-  border-top: 1px dashed;
+	border-top: 1px dashed;
 }
 
 .padding-b-3 {
-  padding-bottom: 5px;
+	padding-bottom: 5px;
 }
 
 .padding-t-3 {
-  padding-top: 5px;
+	padding-top: 5px;
 }
 
 form{
@@ -110,32 +110,38 @@ form{
 </head>
 <body style="display: flex; gap: 50px; justify-content: center;">
 	<div class="bill-container">
+		<form id="formItem">
+			<label for="cantidad">Cantidad</label>
+			<input type="text" name="cantidad" id="cantidad" >
+			<label for="precio">Precio</label>
+			<input type="text" name="precio" id="precio" >
+			<label for="id">Id del producto</label>
+			<input type="text" placeholder="á181241-4" name="id" id="id" >
+			<label for="nombre">Nombre de producto:</label>
+			<input type="text" name="nombre" id="nombre" >
+			<button>
+				Agregar item 
+			</button>
+		</form>
 		<form id="form">
-			<label for="client">Nombre de cliente:</label>
+			<label for="caja">Nro. Caja:</label>
+			<input type="text" name="caja" id="caja" >
+			<label for="cajero">Nro. Cajero</label>
+			<input type="text" name="cajero" id="cajero" >
+			<label for="numeroFactura">Nro. Factura</label>
+			<input type="text" name="numeroFactura" id="numeroFactura" placeholder="Ej: 00008-00024095" >
+			<label for="client">Nombre de cliente</label>
 			<input type="text" name="client" id="client" >
-			<label for="cuit">CUIT</label>
+			<label for="cuit">CUIT:</label>
 			<input type="text" name="cuit" id="cuit" >
-			<label for="contribuyente">Contribuyente</label>
-			<input type="text" name="contribuyente" id="contribuyente" >
-			<label for="direccion">Dirección</label>
-			<input type="text" name="direccion" id="direccion" >
-			<label for="pago">Pago:</label>
-			<input type="text" name="pago" id="pago" >
-			<label for="fecha">Fecha:</label>
-			<input type="text" placeholder="DD/MM/YYYY" name="fecha" id="fecha" >
-			<label for="hora">Hora:</label>
-			<input type="text" name="hora" id="hora" placeholder="HH:MM:SS" >
-			<label for="total">Total:</label>
-			<input type="text" name="total" id="total" >
-			<label for="precioXLitro">precioXLitro:</label>
-			<input type="text" name="precioXLitro" id="precioXLitro" >
-			<label for="itc">ITC:</label>
-			<input type="text" name="itc" id="itc" >
-			<label for="factura">N° de factura:</label>
-			<input type="text" name="factura" id="factura" >
-			<label for="surtidor">N° de surtidor</label>
-			<input type="text" name="surtidor" id="surtidor" >
-
+			<label for="calleYNumeracion">Calle y numeración:</label>
+			<input type="text" placeholder="Ej: 1 DE MAYO 1086" name="calleYNumeracion" id="calleYNumeracion" >
+			<label for="localidadCodigoPostalProvincia">Localidad, codigo postal y provincia:</label>
+			<input type="text" name="localidadCodigoPostalProvincia" id="localidadCodigoPostalProvincia" placeholder="Ej: VILLA MERCEDES5730-SAN LUIS" >
+			<label for="pesosEntregados">Entrega pesos:</label>
+			<input type="text" name="pesosEntregados" id="pesosEntregados" >
+			<label for="nombreCajero">Nombre cajero/a:</label>
+			<input type="text" name="nombreCajero" id="nombreCajero" >
 			<button>enter</button>
 		</form>
 
@@ -195,16 +201,8 @@ form{
 						<p>[%BI]</p>
 						<p >Precio Neto</p>
 					</div>
-					<div>
-						<div style="display: flex; ">
-							<p style="min-width: 39.5%; margin-left: 15px"><span id="cantidadProducto">5.00</span>/ <span id="precioProducto">190478.52</span></p>
-							<p>(21.00)</p>
-						</div>
-						<p>á181241-4</p>
-						<div style="display: flex; justify-content: space-between">
-							<p>PACK 16 PANELES LANA VIDRIO</p>
-							<p>952392.56</p>
-						</div>
+					<div id="items">
+
 					</div>
 					<div class="deduccion">
 					</div>
@@ -243,41 +241,51 @@ form{
 	const $numeroFactura = document.querySelector('#numeroFactura')
 
 
-
-	function formatPesosARS(number) {
-		const formattedNumber = new Intl.NumberFormat('es-AR', {
-			style: 'currency',
-			currency: 'ARS',
-			maximumFractionDigits: 2,
-		}).format(number)
-
-		return formattedNumber
-	}
-	function formatDecimal(number) {
-
-		return number.toLocaleString('es-ES', {
-			minimumFractionDigits: 2,
-			maximumFractionDigits: 3
-		})
-	}
-
-	function sumar20Segundos(hora) {
-		const [horas, minutos, segundos] = hora.split(':').map(Number);
-	  
-		let totalSegundos = horas * 3600 + minutos * 60 + segundos + 20;
-	  
-		const nuevasHoras = Math.floor(totalSegundos / 3600) % 24;
-		totalSegundos %= 3600;
-		const nuevosMinutos = Math.floor(totalSegundos / 60);
-		const nuevosSegundos = totalSegundos % 60;
-	  
-		const formatoHora = String(nuevasHoras).padStart(2, '0');
-		const formatoMinutos = String(nuevosMinutos).padStart(2, '0');
-		const formatoSegundos = String(nuevosSegundos).padStart(2, '0');
-	  
-		return `${formatoHora}:${formatoMinutos}:${formatoSegundos}`;
+	function createItemHTML(item) {
+		const cantidad =  parseFloat(item.cantidad)
+		const precioNeto = cantidad * parseFloat(item.precio)
+		return `
+		<div>
+			<div style="display: flex;">
+				<p style="min-width: 39.5%; margin-left: 15px">${cantidad.toFixed(2)}/ <span id="precioProducto">${item.precio}</span></p>
+				<p>(21.00)</p>
+			</div>
+			<p>${item.id}</p>
+			<div style="display: flex; justify-content: space-between">
+				<p>${item.nombre}</p>
+				<p>${precioNeto}</p>
+			</div>
+		</div>
+		`
 	}
 
+	const $items = document.getElementById('items')
+
+	const handleSubmitAddItem = (e) => {
+		e.preventDefault()
+
+		const formData = new FormData(e.target)
+
+
+		const producto = {
+			cantidad: formData.get('cantidad'),
+			precio: formData.get('precio'),
+			id: formData.get('id'),
+			nombre: formData.get('nombre')
+		} 
+
+
+		$items.innerHTML += createItemHTML(producto)
+
+
+
+	}
+	
+
+
+	const $formItem = document.getElementById('formItem')
+	$formItem.addEventListener('submit', handleSubmitAddItem)
+		
 
 	const handleSubmitEdit = (e) => {
 		e.preventDefault()
@@ -286,19 +294,15 @@ form{
 
 	
 		const data = {
+			caja: formData.get('caja'),
+			cajero: formData.get('cajero'),
+			numeroFactura: formData.get('numeroFactura'),
 			client: formData.get('client'),
 			cuit: formData.get('cuit'),
-			contribuyente: formData.get('contribuyente'),
-			direccion: formData.get('direccion'),
-			pago: formData.get('pago'),
-			fecha: formData.get('fecha') || fecha,
-			hora: formData.get('hora') || hora,
-			total: formData.get('total')|| 114057.30,
-			precioXLitro: formData.get('precioXLitro') || 1223,
-			itc: formData.get('itc') || 1.32,
-			factura: formData.get('factura'),
-			surtidor: formData.get('surtidor')
+			calleYNumeracion: formData.get('calleYNumeracion'),
+			localidadCodigoPostalProvincia: formData.get('localidadCodigoPostalProvincia'),
 		}
+
 
 		$fecha.innerHTML = data.fecha
 		$hora.innerHTML = data.hora
@@ -422,21 +426,15 @@ form{
 		numeroFactura
 
 		cliente: {
-			nombre,
-			nrocuit,
+			client,
+			cuit,
 			calleYNumeracion,
 			localidadCodigoPostalProvincia,
 
 		}
-
-		producto: {
-			cantidadProducto: 5.00, //esto es la cantidad entero pero se ponen .00
-			precioProducto,
-			id
-		}
-
 		pesosEntregados
 		nombreCajero
+
 	*/
 	/*
 		COMPONENTE ITEM:
