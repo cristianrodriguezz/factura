@@ -178,25 +178,6 @@
             }
           }
 
-          function printDiv() {
-            // Selecciona el contenedor del ticket
-                let ticket = document.querySelector('#ticket');
-        
-                // Almacena el contenido original del body
-                let contenidoOriginal = document.body.innerHTML;
-        
-                // Reemplaza el contenido del body con el contenido del ticket
-                document.body.innerHTML = ticket.outerHTML;
-        
-                // Llama a la función de impresión
-                window.print();
-        
-                // Restaura el contenido original del body después de imprimir
-                document.body.innerHTML = contenidoOriginal;
-        
-                // Opcionalmente, puedes recargar los scripts o reactivar los eventos si es necesario
-                location.reload();
-            }
         function printDiv()  {
             generateTickets();
             window.print();
