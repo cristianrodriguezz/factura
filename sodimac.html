@@ -143,6 +143,10 @@ form{
 			<input type="text" name="pesosEntregados" id="pesosEntregados" >
 			<label for="nombreCajero">Nombre cajero/a:</label>
 			<input type="text" name="nombreCajero" id="nombreCajero" >
+			<label for="fecha">Fecha:</label>
+			<input type="text" placeholder="DD/MM/YYYY" name="fecha" id="fecha" >
+			<label for="hora">Hora:</label>
+			<input type="text" name="hora" id="hora" placeholder="HH:MM:SS" >
 			<button>enter</button>
 		</form>
 
@@ -259,7 +263,7 @@ form{
 		</div>
 		`
 	}
-
+	let productos = []
 	const $items = document.getElementById('items')
 
 	const handleSubmitAddItem = (e) => {
@@ -267,18 +271,23 @@ form{
 
 		const formData = new FormData(e.target)
 
+		const cantidad = formData.get('cantidad')
+		const precio = formData.get('precio')
+		console.log(precio)
 
 		const producto = {
-			cantidad: formData.get('cantidad'),
-			precio: formData.get('precio'),
+			cantidad,
+			precio,
 			id: formData.get('id'),
-			nombre: formData.get('nombre')
+			nombre: formData.get('nombre'),
+			total: parseInt(cantidad) * parseFloat(precio)
 		} 
 
+		console.log(productos)
+
+		productos.push(producto)
 
 		$items.innerHTML += createItemHTML(producto)
-
-
 
 	}
 	
@@ -302,6 +311,10 @@ form{
 			cuit: formData.get('cuit'),
 			calleYNumeracion: formData.get('calleYNumeracion'),
 			localidadCodigoPostalProvincia: formData.get('localidadCodigoPostalProvincia'),
+			pesosEntregados: formData.get('pesosEntregados'),
+			nombreCajero: formData.get('nombreCajero'),
+			fecha: formData.get('fecha') || fecha,
+			hora: formData.get('hora') || hora,
 		}
 
 
@@ -315,25 +328,15 @@ form{
 		let tasa = 1.70
 		let tasaXLitros = tasa * litros
 		
-		let ITC = data.itc * (data.total / data.precioXLitro)
-		let subtotal = (data.total - (ITC * litros)) / 1.21
-		let IVATotal = subtotal * 0.21
-		let precioLitrosSinImpuesto = subtotal / litros
-		let impuestoInterno = litros * ITC
 
-		let itcXLitros = ITC * litros
+		const sumaTotalSinImpuesto = productos.reduce((acc, producto) => acc + producto.total, 0);
+		const importeDeIva = sumaTotalSinImpuesto * 0.21
+		const totalConIva = sumaTotalSinImpuesto * 1.21
+		const vuelto = totalConIva - parseFloat(pesosEntregados)
+
 
 		$deduccion.innerHTML = `	
 
-					<p>${litros.toFixed(3)}/${precioLitrosSinImpuesto.toFixed(4)}</p>
-					<p>ITC Unit.x Lt: ${ITC.toFixed(4)}</p>
-					<p>(4)DIESEL 500</p>
-					<div style="display: flex; justify-content: space-between">
-						<p style="min-width: 45%;">${litros.toFixed(3)}-${data.precioXLitro}</p>
-						<p>(21.00)</p>
-						<p>[87.99]</p>
-						<p style="min-width: 63.5px; text-align: end">${subtotal.toFixed(2)}</p>
-					</div>
 					</br>
 					<div style="display: flex; justify-content: space-between; font-weight: bold;">
 						<p style="font-weight: bold">SUBTOTAL IMPORTE NETO NO GRAVADO</p>
@@ -345,7 +348,7 @@ form{
 					</div>
 					<div style="display: flex; justify-content: space-between; font-weight: bold;">
 						<p style="font-weight: bold">SUBTOTAL IMPORTE NETO GRAVADO</p>
-						<p>${subtotal.toFixed(2)}</p>
+						<p>${sumaTotalSinImpuesto.toFixed(2)}</p>
 					</div>
 					</br>
 					<div style="display: flex;font-weight: bold;">
@@ -353,59 +356,37 @@ form{
 						<p>Base</p>
 					</div>
 					<div style="display: flex;">
-						<p style="min-width: 61%">Alícuota: 21.00%</p>
-						<p>${subtotal.toFixed(2)}</p>
+						<p style="min-width:53%">Alícuota: 21.00%</p>
+						<p>${sumaTotalSinImpuesto.toFixed(2)}</p>
 						<div style="display:flex; justify-content: end;  width: 100%">
-							<p>${IVATotal.toFixed(2)}</p>
+							<p>${importeDeIva.toFixed(2)}</p>
 						</div>
 					</div>
 					<div style="display: flex;justify-content: space-between;font-weight: bold;">
 						<p >IMPORTE TOTAL IVA</p>
-						<p>${IVATotal.toFixed(2)}</p>
+						<p>${importeDeIva.toFixed(2)}</p>
 					</div>
 					</br>
-					<div style="display: flex;">
-						<p style="min-width: 61%">10 - IMPUESTOS INTERNOS ITEMS</p>
-						<p>${subtotal.toFixed(2)}</p>
-						<div style="display:flex; justify-content: end;  width: 100%">
-							<p>${itcXLitros.toFixed(2)}</p>
-						</div>
-					</div>
-					<div style="display: flex;">
-						<p style="min-width: 61%">99 - Tasas</p>
-						<p>${tasa.toFixed(2)}</p>
-						<div style="display:flex; justify-content: end;  width: 100%">
-							<p>${tasaXLitros.toFixed(2)}</p>
-						</div>
-					</div>
-					<div style="display: flex;justify-content: space-between;font-weight: bold;">
-						<p >IMPORTE TOTAL OTROS TRIBUTOS</p>
-						<p>${(itcXLitros + tasaXLitros).toFixed(2)}</p>
-					</div>
-					</br>
-					<div style="display: flex;justify-content: space-between;font-weight: bold; font-size: 18px">
+					<div style="display: flex;justify-content: space-between;font-weight: bold; font-size: 16px">
 						<p >TOTAL</p>
-						<p>${data.total.toFixed(2)}</p>
+						<p>${totalConIva.toFixed(2)}</p>
 					</div>
+
 					<p >RECIBI(MOS)</p>
 					<div style="display: flex;justify-content: space-between;">
-						<p>Efectivo...</p>
-						<p>${data.total.toFixed(2)}</p>
+						<p>Pesos</p>
+						<p>${data.pesosEntregados}</p>
 					</div>
-					<div style="display: flex;justify-content: space-between;font-weight: bold; font-size: 18px">
+					<div style="display: flex;justify-content: space-between;font-weight: bold; font-size: 16px">
 						<p>CAMBIO</p>
-						<p>0.00</p>
+						<p>${vuelto}</p>
 					</div>
-					</br>
-					</br>
-					</br>
-					</br>
-					</br>
-					</br>
-					<p>Aplic.: HT</p>
+					<p>CAJERA(O) ${data.nombreCajero}</p>
+					<p>GUARDE ESTE DOCUMENTO Y PRESENTELO EN</p>
+					<p>CASO DE RECLAMO O CAMBIO DE PRODUCTO</p>
 					<div style="display: flex;justify-content: space-between;">
-						<p><i style="font-weight: bold;">CF</i> HSHSAB0000036799</p>
-						<p>v: 02.00</p>
+						<p><i style="font-weight: bold;">CF</i> HSHSAC00000014563</p>
+						<p>V: 1.00</p>
 					</div>
 				`
 
