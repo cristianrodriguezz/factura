@@ -169,7 +169,7 @@ form{
 					<p>IVA RESPONSABLE INSCRIPTO</p>
 					<p><span style="margin-right: 10px;">SODIMAC ARGENTINA  </span>CUIT : 30-65572582-9</p>
 					<p>AV. SAN MARTIN 421 <span style="margin-left: 25px;"> SAN MARTIN</span></p>
-					<p>Caja:<span id="caja" style="margin-right: 8px;">0013</span> Cajero: <span id="cajero">806</span> <span>CC:05012</span></p>
+					<p>Caja:<span id="cajas" style="margin-right: 8px;">0013</span> Cajero: <span id="cajeros">806</span> <span>CC:05012</span></p>
 				</td>
 			</tr>
 			<tr>
@@ -235,6 +235,9 @@ form{
 
 	const $fecha = document.querySelector('.fecha')
 	const $hora = document.querySelector('.hora')
+	const $caja = document.getElementById('cajas')
+	const $cajero = document.getElementById('cajeros')
+
 
 
 	const $client = document.querySelector('.client')
@@ -317,7 +320,9 @@ form{
 			hora: formData.get('hora') || hora,
 		}
 
-
+		
+		$caja.innerHTML = data.caja
+		$cajero.innerHTML = data.cajero
 		$fecha.innerHTML = data.fecha
 		$hora.innerHTML = data.hora
 		$numeroFactura.innerText = data.factura
