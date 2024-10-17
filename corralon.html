@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+	<style>
+	*{
+		box-sizing: border-box;
+		-webkit-user-select: none; /* Chrome, Opera, Safari */
+		-moz-user-select: none; /* Firefox 2+ */
+		-ms-user-select: none; /* IE 10+ */
+		user-select: none; /* Standard syntax */
+		margin: 0;
+		padding: 0;
+		
+	}
+.font{
+	font-family: monospace;
+  	font-size: 12px;
+}
+
+
+.bill-container{
+	border-collapse: collapse;
+	max-width: 8cm;
+	min-width: 8cm;
+	left:0;
+	right: 0;
+	border-collapse: collapse;
+	font-family: monospace;
+	font-size: 10.5px;
+	
+}
+.title{
+	font-family: monospace;
+	font-size: 15px;
+	text-align: center;
+	letter-spacing: 4px;
+	text-transform: uppercase;
+	font-weight: 100;
+}
+
+.text-lg{
+	font-size: 20px;
+}
+
+.text-center{
+	text-align: center;
+}
+
+.title-second{
+	font-family: monospace;
+	font-size: 14px;
+	text-align: center;
+	letter-spacing: -0.2px;
+	text-transform: uppercase;
+	font-weight: 100;
+	margin-top: 6px;
+}
+
+
+#qrcode {
+	width: 75%
+}
+
+p {
+	margin: 2px 0;
+}
+
+table table {
+	width: 100%;
+}
+table{
+	width: 100%;
+}
+
+table table tr td:last-child{
+	text-align: right;
+}
+
+.border-top {
+	border-top: 1px dashed;
+}
+
+.padding-b-3 {
+	padding-bottom: 5px;
+}
+
+.padding-t-3 {
+	padding-top: 5px;
+}
+
+form{
+	display: flex;
+	flex-direction: column;
+}
+.flex{
+	display: flex;
+} 
+.justify-center{
+	justify-content: space-between;
+} 
+.align-center{
+	align-items: center;
+}
+
+
+
+	</style>
+</head>
+<body style="display: flex; gap: 50px; justify-content: center;">
+	<div class="bill-container">
+        <div style="margin-block: 25px;">
+            <p>Pasos de uso: </p>
+            <ol>
+                <li>Agregar items. La cantidad que quieras</li>
+                <li>Completar los demás inputs</li>
+                <li>Darle a el botón enter</li>
+                <li>En el caso de que agregues items después de haber hecho el paso 3. Volver a apretar botón enter para actualizar valores.</li>
+            </ol>
+        </div>
+		<form id="formItem">
+			<label for="cantidad">Cantidad</label>
+			<input type="text" name="cantidad" id="cantidad" >
+			<label for="precio">Precio</label>
+			<input type="text" name="precio" id="precio" >
+			<label for="nombre">Nombre de producto:</label>
+			<input type="text" name="nombre" id="nombre" >
+			<button>
+				Agregar item 
+			</button>
+		</form>
+		<form id="form">
+			<label for="numeroFactura">Nro. Factura</label>
+			<input type="text" name="numeroFactura" id="numeroFactura" placeholder="Ej: 00008-00024095" >
+			<label for="client">Nombre de cliente</label>
+			<input type="text" name="client" id="client" >
+			<label for="cuit">CUIT:</label>
+			<input type="text" name="cuit" id="cuit" placeholder="xx-xxxxxxxx-x">
+			<label for="calleYNumeracion">Calle y numeración:</label>
+			<input type="text" placeholder="Ej: 1 DE MAYO 1086" name="calleYNumeracion" id="calleYNumeracion" >
+			<label for="contribuyente">Contribuyente: (opcional)</label>
+			<input type="text" placeholder="Ej: IVA RESPONSABLE INSCRIPTO" name="contribuyente" id="contribuyente" >
+			<label for="localidad">Localidad</label>
+			<input type="text" name="localidad" id="localidad" placeholder="Ej: VILLA MERCEDES" >
+			<label for="fecha">Fecha: (opcional, por defecto fecha de hoy)</label>
+			<input type="text" placeholder="DD/MM/YYYY" name="fecha" id="fecha" >
+			<label for="hora">Hora: (opcional, por defecto hora actual)</label>
+			<input type="text" name="hora" id="hora" placeholder="HH:MM:SS" >
+			<button>enter</button>
+		</form>
+
+	</div>
+	<div>
+
+
+	<div class="bill-container" id="ticket">
+		<table >
+			<tr>
+				<td class="padding-b-3">
+
+                    <h2  style="text-align: center;">CORRALON GHEZZI SRL</h2>
+					<p>CORRALON GHEZZI SRL</p>
+					<p >C.U.I.T. Nro.: 33-71727604-9</p>
+					<p>Ing. Brutos: 33-71727604-9</p>
+					<p>ITALIA 1220</p>
+					<p>C.P.(1625) ESCOBAR - BUENOS AIRES</p>
+					<p>Inicio de Actividades: 29/04/2021</p>
+					<p>IVA RESPONSABLE INSCRIPTO</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="border-top padding-t-3 padding-b-3   ">
+                    <div style="display: flex; justify-content: space-between">
+					    <p style="min-width: 185px; letter-spacing: -0.2px"><strong>TIQUE FACTURA "A" (Cód.081)</strong></p>
+					    <p style="text-align:end ;font-size: 11px;">N° <span id="numeroFacturas">00018-00019310</span></p>
+                    </div>
+					<p style="text-align: end; margin-right: 10px">Fecha: <span class="fecha">30/05/24</span> </p>
+					<p style="text-align: end; margin-right: 5px">Hora <span class="hora">10:03:55</span></p>
+				</td>
+			</tr>
+			<tr>
+				<td class="border-top padding-t-3 padding-b-3">
+        
+					<div style="letter-spacing: 0px;">
+						<p >Nombre:<span id="clientSpan">CASTRO HECTOR HUGO</span></p>
+						<p >CUIT Nro.: <span id="cuitSpan">23-31237586-9</span></p>
+						<p><span id="contribuyenteSpan">IVA RESPONSABLE INSCRIPTO</span> </p>
+						<p >Direcc:<span id="calleYNumeracionSpan">1 DE MAYO 1086</span></p>
+						<p id="localidadSpan">VILLA MERCEDES</p>
+					</div>
+				</td>
+			<tr>
+				<td >
+                    <div class="border-top padding-t-3 padding-b-3">
+
+                        <p >Cantidad/Precio Unit.</p>
+                        <div style="display: flex; justify-content: space-between">
+                            <p>Descripción (%IVA)(%BI)</p>
+                            <p>IMPORTE</p>
+                        </div>
+                    </div>
+                    <div class="border-top padding-t-3 padding-b-3">
+
+                        <div id="items">
+
+                        </div>
+                        <div class="deduccion">
+                        </div>
+                    </div>
+				</td>
+			</tr>
+			</tr>
+		</table>
+
+		<button onclick="printDiv()" style="height: 30px; width: 100%; margin-top: 20px; ">imprimir</button>
+	</div>
+</body>
+<script>
+	let date = new Date()
+	let day = date.getDate()
+	let month = (date.getMonth() + 1).toString().padStart(2, '0')
+	let year = date.getFullYear()
+	
+	let fecha = `${day}/${month}/${year}`
+
+	let hours = date.getHours().toString().padStart(2, '0')
+	let minutes = date.getMinutes().toString().padStart(2, '0')
+	let seconds = date.getSeconds().toString().padStart(2, '0')
+	
+	const hora =  `${hours}:${minutes}:${seconds}`
+
+	const $fecha = document.querySelector('.fecha')
+	const $hora = document.querySelector('.hora')
+	const $caja = document.getElementById('cajas')
+	const $cajero = document.getElementById('cajeros')
+
+
+
+	const $client = document.querySelector('#clientSpan')
+	const $cuit = document.querySelector('#cuitSpan')
+	const $contribuyente = document.querySelector('#contribuyenteSpan')
+	const $calleYNumeracion = document.querySelector('#calleYNumeracionSpan')
+	const $localidad = document.querySelector('#localidadSpan')
+	const $numeroFactura = document.querySelector('#numeroFacturas')
+	const $deduccion = document.querySelector('.deduccion')
+
+
+	function createItemHTML(item) {
+		const cantidad =  parseFloat(item.cantidad)
+		const precioNeto = cantidad * parseFloat(item.precio)
+		return `
+
+        <div>
+            <p style="min-width: 39.5%; ">${cantidad.toFixed(3)} x <span style="margin-left: 15px;" id="precioProducto">${item.precio}</span></p>
+            <div style="display: flex; justify-content: space-between">
+                <p style="text-transform: uppercase; min-width: 50%">${item.nombre}</p>
+                <p>(21.00)</p>
+                <p style="min-width: 58px; text-align: end">${precioNeto}</p> 
+            </div>
+        </div>
+		`
+	}
+	let productos = []
+	const $items = document.getElementById('items')
+
+	const handleSubmitAddItem = (e) => {
+		e.preventDefault()
+
+		const formData = new FormData(e.target)
+
+		const cantidad = formData.get('cantidad')
+		const precio = formData.get('precio')
+
+
+		const producto = {
+			cantidad,
+			precio,
+			nombre: formData.get('nombre'),
+			total: parseInt(cantidad) * parseFloat(precio)
+		} 
+
+
+		$items.innerHTML += createItemHTML(producto)
+
+	}
+	
+
+
+	const $formItem = document.getElementById('formItem')
+	$formItem.addEventListener('submit', handleSubmitAddItem)
+		
+
+	const handleSubmitEdit = (e) => {
+		e.preventDefault()
+
+		const formData = new FormData(e.target)
+
+	
+		const data = {
+			numeroFactura: formData.get('numeroFactura'),
+			client: formData.get('client'),
+			cuit: formData.get('cuit'),
+			contribuyente: formData.get('contribuyente'),
+			localidad: formData.get('localidad'),
+			fecha: formData.get('fecha') || fecha,
+			hora: formData.get('hora') || hora,
+            calleYNumeracion: formData.get('calleYNumeracion')
+		}
+
+		console.log(data)
+
+		$fecha.innerHTML = data.fecha
+		$hora.innerHTML = data.hora
+
+        $client.innerHTML = data.client
+        $cuit.innerHTML = data.cuit
+        $calleYNumeracion.innerHTML = data.calleYNumeracion
+        $localidad.innerHTML = data.localidad
+
+
+        if(data.numeroFactura){
+            $numeroFactura.innerHTML = data.numeroFactura
+        }
+        if(data.contribuyente){
+            $contribuyente.innerHTML = data.contribuyente
+        }
+
+		let litros = data.total / data.precioXLitro
+
+		let IVA = 21
+		let tasa = 1.70
+		let tasaXLitros = tasa * litros
+		
+
+		const sumaTotalSinImpuesto = productos.reduce((acc, producto) => acc + producto.total, 0);
+		const importeDeIva = sumaTotalSinImpuesto * 0.21
+		const totalConIva = sumaTotalSinImpuesto * 1.21
+
+
+
+		$deduccion.innerHTML = `	
+                            <p style="text-transform: uppercase; min-width: 50%">DIF. AJUSTE</p>
+                            <div style="display: flex; justify-content: space-between">
+                                <p style="min-width: 57%">$0.01</p>
+                                <p>(0)</p>
+                                <p style="min-width: 57px; text-align: end">0.00</p> 
+                            </div>
+                            <br>
+                            <div style="display: flex; justify-content: space-between">
+                                <p>SUBTOT. IMP. NETO GRAVADO</p>
+                                <p>${sumaTotalSinImpuesto.toFixed(2)}</p>
+                            </div>
+                            <br>
+                            <div style="display: flex; justify-content: space-between">
+                                <p>ALICUOTA 21,00%</p>
+                                <p >${importeDeIva.toFixed(2)}</p>
+                            </div>
+                            <div style="display: flex; justify-content: space-between">
+                                <p>ALICUOTA 0,00%</p>
+                                <p >0.00</p>
+                            </div>
+                            <br>
+                            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 14px">
+                                <p>TOTAL</p>
+                                <p >${totalConIva.toFixed(2)}</p>
+                            </div>
+                            <p>RECIBI/MOS:</p>
+                            <div style="display: flex; justify-content: space-between;">
+                                <p>Efectivo</p>
+                                <p >${totalConIva.toFixed(2)}</p>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <p>Suma de sus pagos</p>
+                                <p >${totalConIva.toFixed(2)}</p>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <p>Su Vuelto</p>
+                                <p >0.00</p>
+                            </div>
+                            <br>
+                            <div style="display: flex;justify-content: space-between; flex-direction:column">
+                                <p style="margin-block: 0"><i style="font-weight: bold; color: gray; font-size: 15px; margin-right: 20px; ">CF</i>REGISTRO: EPEPAA0000032194</p>
+                                <p style="margin-left: 38px; margin-block: 0">V: 1.00</p>
+                            </div>
+				`
+
+
+	}
+
+	const $form = document.getElementById('form')
+	const $buttonEditFactura = document.querySelector('.editarFacturaButton')
+	const $div = document.querySelector('.editFactura')
+
+	$form.addEventListener('submit', handleSubmitEdit)
+
+
+
+
+	function printDiv() {
+    // Selecciona el contenedor del ticket
+    let ticket = document.querySelector('#ticket');
+
+    // Almacena el contenido original del body
+    let contenidoOriginal = document.body.innerHTML;
+
+    // Reemplaza el contenido del body con el contenido del ticket
+    document.body.innerHTML = ticket.outerHTML;
+
+    // Llama a la función de impresión
+    window.print();
+
+    // Restaura el contenido original del body después de imprimir
+    document.body.innerHTML = contenidoOriginal;
+
+    // Opcionalmente, puedes recargar los scripts o reactivar los eventos si es necesario
+    location.reload();
+}
+
+</script>
+</html>
