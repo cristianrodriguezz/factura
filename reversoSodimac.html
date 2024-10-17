@@ -107,8 +107,8 @@
 <body style="display: flex; gap: 50px; justify-content: center; ">
 	<div id="container">
 
-        <input type="text" placeholder="Número de veces que va a imprimir"  name="veces" style="width: 100%;" id="veces">
-        <button onclick="printDiv()" style="height: 30px; width: 100%; margin-top: 20px; ">imprimir</button>
+        <input  type="text" placeholder="Número de veces que va a imprimir"  name="veces" style="width: 100%;" id="veces">
+        <button  onclick="printDiv()" id="buttonPrint" style="height: 30px; width: 100%; margin-top: 20px; ">imprimir</button>
     </div>
 	<script>
         function createTicketHtml() {
@@ -168,8 +168,11 @@
           }
 
         function printDiv()  {
+			document.getElementById('buttonPrint').remove()
+			document.getElementById('veces').style.display = 'none'
             generateTickets();
             window.print();
+			
         }
 
 		window.onload = container.innerHTML += createTicketHtml();

@@ -13,7 +13,7 @@
 		user-select: none; /* Standard syntax */
 		margin: 0;
 		padding: 0;
-		
+		letter-spacing: -0.2px;
 	}
 .font{
 	font-family: monospace;
@@ -103,6 +103,9 @@ form{
 .align-center{
 	align-items: center;
 }
+p{
+	margin: 0;
+}
 
 
 
@@ -114,16 +117,15 @@ form{
 			<label for="client">Nombre de cliente:</label>
 			<input type="text" name="client" id="client" >
 			<label for="cuit">CUIT</label>
-			<input type="text" name="cuit" id="cuit" >
-			<label for="contribuyente">Contribuyente</label>
+			<input type="text" name="cuit" id="cuit" placeholder="xxxxxxxxxxx" >
+			<label for="contribuyente">Contribuyente (opcional)</label>
 			<input type="text" name="contribuyente" id="contribuyente" >
-			<label for="direccion">Dirección</label>
-			<input type="text" name="direccion" id="direccion" >
-			<label for="pago">Pago:</label>
-			<input type="text" name="pago" id="pago" >
-			<label for="fecha">Fecha:</label>
+			<label for="direccion">Dirección, numeracion y localidad</label>
+			<input type="text" name="direccion" id="direccion" placeholder="SUIPACHA 670 MERCEDES">
+
+			<label for="fecha">Fecha: (opcional)</label>
 			<input type="text" placeholder="DD/MM/YYYY" name="fecha" id="fecha" >
-			<label for="hora">Hora:</label>
+			<label for="hora">Hora: (opcional)</label>
 			<input type="text" name="hora" id="hora" placeholder="HH:MM:SS" >
 			<label for="total">Total:</label>
 			<input type="text" name="total" id="total" >
@@ -132,7 +134,7 @@ form{
 			<label for="itc">ITC:</label>
 			<input type="text" name="itc" id="itc" >
 			<label for="factura">N° de factura:</label>
-			<input type="text" name="factura" id="factura" >
+			<input type="text" name="factura" id="factura" placeholder="XXXXX-XXXXXXXX">
 			<label for="surtidor">N° de surtidor</label>
 			<input type="text" name="surtidor" id="surtidor" >
 
@@ -171,10 +173,10 @@ form{
 			<tr>
 				<td class="border-top padding-t-3 padding-b-3">
 					<div style="letter-spacing: 0px;">
-						<p>TRANSPORTE MARTINEZ E HIJOS</p>
-						<p>C.U.I.T.: 30715271547</p>
-						<p>IVA Responsable Inscripto</p>
-						<p>SUIPACHA 670 MERCEDES</p>
+						<p id="nombreCliente">TRANSPORTE MARTINEZ E HIJOS</p>
+						<p >C.U.I.T.: <span id="cuitCliente">30715271547</span></p>
+						<p id="ivaCliente">IVA Responsable Inscripto</p>
+						<p id="direccionCliente">SUIPACHA 670 MERCEDES</p>
 						<p>(829 <span style="margin-left: 11px;">)</span> CONTADO </p>
 						<br>
 					</div>
@@ -195,7 +197,7 @@ form{
 			</tr>
 		</table>
 
-		<button onclick="printDiv()" style="height: 30px; width: 100%; margin-top: 20px; ">imprimir</button>
+		<button id="buttonImprimir" onclick="printDiv()" style="height: 30px; width: 100%; margin-top: 20px; ">imprimir</button>
 	</div>
 </body>
 <script>
@@ -220,9 +222,16 @@ form{
 	const $cuit = document.querySelector('.cuit')
 	const $contribuyente = document.querySelector('.contribuyente')
 	const $direccion = document.querySelector('.direccion')
-	const $pago = document.querySelector('.pago')
+
 	const $deduccion = document.querySelector('.deduccion')
 	const $numeroFactura = document.querySelector('#numeroFactura')
+
+
+	let $nombreCliente = document.getElementById('nombreCliente')
+	let $direccionCliente = document.getElementById('direccionCliente')
+	let $cuitCliente = document.getElementById('cuitCliente')
+	let $ivaCliente = document.getElementById('ivaCliente')
+
 
 
 
@@ -266,13 +275,12 @@ form{
 
 		const formData = new FormData(e.target)
 
-	
+
 		const data = {
 			client: formData.get('client'),
 			cuit: formData.get('cuit'),
 			contribuyente: formData.get('contribuyente'),
 			direccion: formData.get('direccion'),
-			pago: formData.get('pago'),
 			fecha: formData.get('fecha') || fecha,
 			hora: formData.get('hora') || hora,
 			total: parseFloat(formData.get('total')),
@@ -286,13 +294,22 @@ form{
 		$hora.innerHTML = data.hora
 		$numeroFactura.innerText = data.factura
 
+
+		$nombreCliente.innerText =  data.client
+		$direccionCliente.innerText = data.direccion
+		$cuitCliente.innerText = data.cuit
+		
+		if (data.contribuyente) {
+			$ivaCliente.innerText = data.contribuyente
+		}
+
 		let litros = data.total / data.precioXLitro
 
 		let IVA = 21
 		let tasa = 1.70
 		let tasaXLitros = tasa * litros
 		
-		let ITC = data.itc * (data.total / data.precioXLitro)
+		let ITC = parseFloat(data.itc)
 		let subtotal = (data.total - (ITC * litros)) / 1.21
 		let IVATotal = subtotal * 0.21
 		let precioLitrosSinImpuesto = subtotal / litros
@@ -312,21 +329,21 @@ form{
 						<p style="min-width: 63.5px; text-align: end">${subtotal.toFixed(2)}</p>
 					</div>
 					</br>
-					<div style="display: flex; justify-content: space-between; font-weight: bold;">
-						<p style="font-weight: bold">SUBTOTAL IMPORTE NETO NO GRAVADO</p>
+					<div style="display: flex; justify-content: space-between; font-weight: bolder;">
+						<p style="font-weight: bolder">SUBTOTAL IMPORTE NETO NO GRAVADO</p>
 						<p>0.00</p>
 					</div>
-					<div style="display: flex; justify-content: space-between; font-weight: bold;">
-						<p style="font-weight: bold">SUBTOTAL IMPORTE EXENTO</p>
+					<div style="display: flex; justify-content: space-between; font-weight: bolder;">
+						<p style="font-weight: bolder">SUBTOTAL IMPORTE EXENTO</p>
 						<p>0.00</p>
 					</div>
-					<div style="display: flex; justify-content: space-between; font-weight: bold;">
-						<p style="font-weight: bold">SUBTOTAL IMPORTE NETO GRAVADO</p>
+					<div style="display: flex; justify-content: space-between; font-weight: bolder;">
+						<p style="font-weight: bolder">SUBTOTAL IMPORTE NETO GRAVADO</p>
 						<p>${subtotal.toFixed(2)}</p>
 					</div>
 					</br>
-					<div style="display: flex;font-weight: bold;">
-						<p style="min-width: 61%; font-weight: bold">Concepto</p>
+					<div style="display: flex;font-weight: bolder;">
+						<p style="min-width: 61%; font-weight: bolder">Concepto</p>
 						<p>Base</p>
 					</div>
 					<div style="display: flex;">
@@ -336,7 +353,7 @@ form{
 							<p>${IVATotal.toFixed(2)}</p>
 						</div>
 					</div>
-					<div style="display: flex;justify-content: space-between;font-weight: bold;">
+					<div style="display: flex;justify-content: space-between;font-weight: bolder;">
 						<p >IMPORTE TOTAL IVA</p>
 						<p>${IVATotal.toFixed(2)}</p>
 					</div>
@@ -355,12 +372,12 @@ form{
 							<p>${tasaXLitros.toFixed(2)}</p>
 						</div>
 					</div>
-					<div style="display: flex;justify-content: space-between;font-weight: bold;">
+					<div style="display: flex;justify-content: space-between;font-weight: bolder;">
 						<p >IMPORTE TOTAL OTROS TRIBUTOS</p>
 						<p>${(itcXLitros + tasaXLitros).toFixed(2)}</p>
 					</div>
 					</br>
-					<div style="display: flex;justify-content: space-between;font-weight: bold; font-size: 18px">
+					<div style="display: flex;justify-content: space-between;font-weight: bold; font-size: 14px">
 						<p >TOTAL</p>
 						<p>${data.total.toFixed(2)}</p>
 					</div>
@@ -369,7 +386,7 @@ form{
 						<p>Efectivo...</p>
 						<p>${data.total.toFixed(2)}</p>
 					</div>
-					<div style="display: flex;justify-content: space-between;font-weight: bold; font-size: 18px">
+					<div style="display: flex;justify-content: space-between;font-weight: bold; font-size: 14px">
 						<p>CAMBIO</p>
 						<p>0.00</p>
 					</div>
@@ -381,7 +398,7 @@ form{
 					</br>
 					<p>Aplic.: HT</p>
 					<div style="display: flex;justify-content: space-between;">
-						<p><i style="font-weight: bold;">CF</i> HSHSAB0000036799</p>
+						<p><i style="font-weight: bold; color:#575757; font-size: 15px">CF</i> HSHSAB0000036799</p>
 						<p>v: 02.00</p>
 					</div>
 				`
@@ -406,6 +423,8 @@ form{
 
 		// Almacena el contenido original del body
 		let contenidoOriginal = document.body.innerHTML;
+
+		document.getElementById('buttonImprimir').remove()
 
 		// Reemplaza el contenido del body con el contenido del ticket
 		document.body.innerHTML = ticket.outerHTML;

@@ -134,7 +134,7 @@ form{
 			<label for="client">Nombre de cliente</label>
 			<input type="text" name="client" id="client" >
 			<label for="cuit">CUIT:</label>
-			<input type="text" name="cuit" id="cuit" >
+			<input type="text" name="cuit" id="cuit" placeholder="xx-xxxxxxxx-x">
 			<label for="calleYNumeracion">Calle y numeración:</label>
 			<input type="text" placeholder="Ej: 1 DE MAYO 1086" name="calleYNumeracion" id="calleYNumeracion" >
 			<label for="localidadCodigoPostalProvincia">Localidad, codigo postal y provincia:</label>
@@ -216,7 +216,7 @@ form{
 			</tr>
 		</table>
 
-		<button onclick="printDiv()" style="height: 30px; width: 100%; margin-top: 20px; ">imprimir</button>
+		<button onclick="printDiv()" id="buttonPrint" style="height: 30px; width: 100%; margin-top: 20px; ">imprimir</button>
 	</div>
 </body>
 <script>
@@ -253,15 +253,15 @@ form{
 		const cantidad =  parseFloat(item.cantidad)
 		const precioNeto = cantidad * parseFloat(item.precio)
 		return `
-		<div>
+		<div >
 			<div style="display: flex;">
 				<p style="min-width: 39.5%; margin-left: 15px">${cantidad.toFixed(2)}/ <span id="precioProducto">${item.precio}</span></p>
 				<p>(21.00)</p>
 			</div>
 			<p>${item.id}</p>
 			<div style="display: flex; justify-content: space-between">
-				<p>${item.nombre}</p>
-				<p>${precioNeto}</p>
+				<p style="text-transform: uppercase;"">${item.nombre}</p>
+				<p>${precioNeto.toFixed(2)}</p>
 			</div>
 		</div>
 		`
@@ -275,7 +275,7 @@ form{
 		const formData = new FormData(e.target)
 
 		const cantidad = formData.get('cantidad')
-		const precio = formData.get('precio')
+		const precio = parseFloat(formData.get('precio')).toFixed(2)
 		console.log(precio)
 
 		const producto = {
@@ -337,7 +337,8 @@ form{
 		const sumaTotalSinImpuesto = productos.reduce((acc, producto) => acc + producto.total, 0);
 		const importeDeIva = sumaTotalSinImpuesto * 0.21
 		const totalConIva = sumaTotalSinImpuesto * 1.21
-		const vuelto = totalConIva - parseFloat(pesosEntregados)
+		const vuelto = Math.abs( totalConIva - parseFloat(data.pesosEntregados)).toFixed(2)
+
 
 
 		$deduccion.innerHTML = `	
@@ -380,7 +381,7 @@ form{
 					<p >RECIBI(MOS)</p>
 					<div style="display: flex;justify-content: space-between;">
 						<p>Pesos</p>
-						<p>${data.pesosEntregados}</p>
+						<p>${parseFloat(data.pesosEntregados).toFixed(2)}</p>
 					</div>
 					<div style="display: flex;justify-content: space-between;font-weight: bold; font-size: 16px">
 						<p>CAMBIO</p>
@@ -405,44 +406,14 @@ form{
 	$form.addEventListener('submit', handleSubmitEdit)
 
 
-	/*
-	EDITABLES:
-
-		caja
-		cajero
-		numeroFactura
-
-		cliente: {
-			client,
-			cuit,
-			calleYNumeracion,
-			localidadCodigoPostalProvincia,
-
-		}
-		pesosEntregados
-		nombreCajero
-
-	*/
-	/*
-		COMPONENTE ITEM:
-		<div>
-			<div style="display: flex; ">
-				<p style="min-width: 39.5%; margin-left: 15px"><span id="cantidadProducto">5.00</span>/ <span id="precioProducto">190478.52</span></p>
-				<p>(21.00)</p>
-			</div>
-			<p>á181241-4</p>
-			<div style="display: flex; justify-content: space-between">
-				<p>PACK 16 PANELES LANA VIDRIO</p>
-				<p>952392.56</p>
-			</div>
-		</div>
-	*/
-
 
 
 	function printDiv() {
     // Selecciona el contenedor del ticket
     let ticket = document.querySelector('#ticket');
+
+	const $buttonTicket = document.getElementById("buttonPrint").remove()
+
 
     // Almacena el contenido original del body
     let contenidoOriginal = document.body.innerHTML;
